@@ -1,0 +1,32 @@
+# python bytecode and cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# virtual environment directories
+venv/
+.env/
+.venv/
+Pipfile
+Pipfile.lock
+
+# environment files
+.env
+.env.local
+*.secrets
+*.key
+
+# logs and temp files
+*.log
+logs/
+*.sqlite3
+*.db
+
+# vs code settings
+.vscode/
+
+# fastapi and uvicorn temp files
+instance/
+*.pid
+
+sync-system.code-workspace
