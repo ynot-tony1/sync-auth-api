@@ -8,10 +8,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python-version: [3.7.12]
+        python-version: [3.7.13]  # or another 3.7 version available on Ubuntu 22.04
 
     steps:
       - name: Checkout code
