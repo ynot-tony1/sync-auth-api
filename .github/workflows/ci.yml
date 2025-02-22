@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python-version: [3.7.13]  # or another 3.7 version available on Ubuntu 22.04
+        python-version: [3.7.13]
 
     steps:
       - name: Checkout code
@@ -29,4 +29,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run unit tests
+        env:
+          AUTH_DATABASE_URL: "postgresql://auth_admin:dbpass@localhost/auth_db"
+          JWT_SECRET: "supersecretkey"
+          TOKEN_EXPIRE_MINS: "30"
         run: python -m unittest discover -s tests/unit_tests -p "test_*.py" -v
