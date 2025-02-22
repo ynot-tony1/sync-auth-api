@@ -1,0 +1,36 @@
+name: Python 3.7 CI
+
+on:
+  push:
+    branches: [ main, feature/* ]
+  pull_request:
+    branches: [ main, feature/* ]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version: [3.7.13]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          check-latest: false
+
+      - name: Upgrade pip and install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run unit tests
+        env:
+          AUTH_DATABASE_URL: "postgresql://auth_admin:dbpass@localhost/auth_db"
+          JWT_SECRET: "supersecretkey"
+          TOKEN_EXPIRE_MINS: "30"
+        run: python -m unittest discover -s tests/unit_tests -p "test_*.py" -v
