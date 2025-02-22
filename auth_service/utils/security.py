@@ -1,7 +1,7 @@
 import jwt
 import time
 import bcrypt
-from config.settings import JWT_SECRET, TOKEN_EXPIRE_MINS
+from auth_service.config.settings import JWT_SECRET, TOKEN_EXPIRE_MINS
 
 def create_access_token(data):
     """
