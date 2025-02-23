@@ -9,6 +9,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    env:
+      AUTH_DATABASE_URL: "sqlite:///:memory:"   
+      JWT_SECRET: "supersecretkey"
+      TOKEN_EXPIRE_MINS: "30"
     strategy:
       matrix:
         python-version: [3.7.13]
@@ -28,9 +32,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Set PYTHONPATH dynamically
+        run: echo "PYTHONPATH=${{ github.workspace }}:$PYTHONPATH" >> $GITHUB_ENV
+
       - name: Run unit tests
-        env:
-          AUTH_DATABASE_URL: "postgresql://auth_admin:dbpass@localhost/auth_db"
-          JWT_SECRET: "supersecretkey"
-          TOKEN_EXPIRE_MINS: "30"
         run: python -m unittest discover -s tests/unit_tests -p "test_*.py" -v

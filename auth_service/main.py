@@ -15,8 +15,8 @@ Attributes:
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from db.database import engine, Base
-from routes import auth
+from auth_service.db.database import engine, Base
+from auth_service.routes import auth
 
 app = FastAPI()
 app.add_middleware(

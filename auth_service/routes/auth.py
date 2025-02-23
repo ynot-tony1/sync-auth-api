@@ -1,10 +1,10 @@
 import uuid
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from db.db_methods import get_user_by_email, create_user
-from db.database import get_db
-from utils.security import create_access_token, hash_password, verify_password
-from models.user import UserRegister, UserLogin
+from auth_service.db.db_methods import get_user_by_email, create_user
+from auth_service.db.database import get_db
+from auth_service.utils.security import create_access_token, hash_password, verify_password
+from auth_service.models.user import UserRegister, UserLogin
 
 router = APIRouter()
 
@@ -61,9 +61,14 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
 
     Raises:
         HTTPException 400 (bad request): This gets raised if no user is found or if the password is invalid.
+
+        
     """
+
     auth_user = get_user_by_email(db, user.email)
+    print("🔍 Retrieved user:", vars(auth_user) if auth_user else "No user found")
     if not auth_user or not verify_password(user.password, auth_user.hashed_password):
+        print("❌ Login failed due to invalid credentials") 
         raise HTTPException(status_code=400, detail="Invalid username or password")
     token = create_access_token({"sub": auth_user.sub, "email": auth_user.email})
     return {"access_token": token, "token_type": "bearer"}
