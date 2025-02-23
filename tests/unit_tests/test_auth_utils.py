@@ -6,14 +6,11 @@ which include JWT token creation (with an expiration claim), password hashing,
 and password verification.
 """
 
-import os
-import sys
 import time
 import jwt
 import unittest
 
-# Add the inner "auth_service" directory to sys.path so that
-# the absolute import "from config.settings import ..." works.
+
 
 from auth_service.utils.security import create_access_token, hash_password, verify_password
 

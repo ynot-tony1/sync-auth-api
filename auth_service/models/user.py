@@ -20,7 +20,7 @@ Classes:
                login data.
 """
 from sqlalchemy import Column, Integer, String
-from db.database import Base
+from auth_service.db.database import Base
 from pydantic import BaseModel
 
 class AuthUser(Base):

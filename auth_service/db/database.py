@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from config.settings import AUTH_DATABASE_URL
-from db.base import Base
+from auth_service.config.settings import AUTH_DATABASE_URL
+from auth_service.db.base import Base
 
 engine = create_engine(AUTH_DATABASE_URL)
 
