@@ -10,8 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     env:
-      DATABASE_URL: "sqlite:///:memory:"   # Use in-memory SQLite for testing
-      AUTH_DATABASE_URL: "postgresql://auth_admin:dbpass@localhost/auth_db"
+      AUTH_DATABASE_URL: "sqlite:///:memory:"   
       JWT_SECRET: "supersecretkey"
       TOKEN_EXPIRE_MINS: "30"
     strategy:
