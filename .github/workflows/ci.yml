@@ -33,8 +33,8 @@ jobs:
 
       - name: Run unit tests
         env:
+          DATABASE_URL: "sqlite:///:memory:" 
           AUTH_DATABASE_URL: "postgresql://auth_admin:dbpass@localhost/auth_db"
           JWT_SECRET: "supersecretkey"
           TOKEN_EXPIRE_MINS: "30"
         run: python -m unittest discover -s tests/unit_tests -p "test_*.py" -v
-
