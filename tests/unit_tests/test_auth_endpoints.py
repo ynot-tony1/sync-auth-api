@@ -4,10 +4,15 @@ Unit Test Suite for Auth Service API Endpoints
 This module tests the /register and /login endpoints defined in auth_service/routes/auth.py.
 """
 
+import os
+os.environ["DATABASE_URL"] = "sqlite:///:memory:"  # Force in-memory SQLite for testing
+
+
 import uuid
 import unittest
 from unittest.mock import MagicMock, patch
 from fastapi.testclient import TestClient
+
 
 
 from auth_service.main import app
