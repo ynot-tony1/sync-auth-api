@@ -5,7 +5,7 @@ This module tests the /register and /login endpoints defined in auth_service/rou
 """
 
 import os
-os.environ["DATABASE_URL"] = "sqlite:///:memory:"  # Force in-memory SQLite for testing
+os.environ["DATABASE_URL"] = "sqlite:///:memory:" 
 
 
 import uuid
