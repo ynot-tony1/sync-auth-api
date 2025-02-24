@@ -9,9 +9,6 @@ and password verification.
 import time
 import jwt
 import unittest
-
-
-
 from auth_service.utils.security import create_access_token, hash_password, verify_password
 
 class TestSecurityUtilities(unittest.TestCase):
