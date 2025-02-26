@@ -1,39 +1,46 @@
 """
-It contains two sets of models:
+Module for SQLAlchemy and Pydantic models for the authentication user.
 
-1.  AuthUser model is an SQLAlchemy ORM model that stands for a user record in the
-   'auth_users' table. This model is used by the ORM to map python objects to database rows.
-   It has fields for the user ID pk, email, hashed password, and a unique sub to identify it accross environments.
-
-2. Pydantic models UserRegister and UserLogin are used to validate and organize
-   input data for user registration and login. They make sure that the data coming into the API
-   conforms to the expected structure for creating or authenticating users.
-
-Classes:
-    AuthUser: Inherits from the SQLAlchemy Base class. Outlines the structure of the 'auth_users'
-    table with columns for user_id, email, hashed_password, and sub.
-
-    UserRegister: A Pydantic BaseModel that requires an email and a password. 
-    For validating registration data.
-
-    UserLogin: A Pydantic BaseModel that requires an email and a password. For validating
-               login data.
+This module defines the SQLAlchemy ORM model for an authentication user and the corresponding
+Pydantic models for request validation.
 """
+
 from sqlalchemy import Column, Integer, String
 from auth_service.db.database import Base
 from pydantic import BaseModel
 
 class AuthUser(Base):
+    """SQLAlchemy model representing a user in the authentication system.
+
+    Attributes:
+        __tablename__ (str): Name of the database table.
+        user_id (int): Primary key for the user record.
+        email (str): Unique email address of the user.
+        hashed_password (str): Hashed password of the user.
+        sub (str): Unique subject identifier for the user.
+    """
     __tablename__ = "auth_users"  
-    user_id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
-    sub = Column(String, unique=True, nullable=False)
+    user_id: int = Column(Integer, primary_key=True, index=True)
+    email: str = Column(String, unique=True, nullable=False)
+    hashed_password: str = Column(String, nullable=False)
+    sub: str = Column(String, unique=True, nullable=False)
 
 class UserRegister(BaseModel):
+    """Pydantic model for user registration input.
+
+    Attributes:
+        email (str): User's email address.
+        password (str): Plaintext password for registration.
+    """
     email: str 
     password: str
 
 class UserLogin(BaseModel):
+    """Pydantic model for user login input.
+
+    Attributes:
+        email (str): User's email address.
+        password (str): Plaintext password for login.
+    """
     email: str
     password: str

@@ -1,4 +1,12 @@
+"""
+Authentication routes module.
+
+This module defines endpoints for user registration and login. It uses dependency injection
+to provide database sessions and leverages Pydantic models for input validation.
+"""
+
 import uuid
+from typing import Dict
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from auth_service.db.db_methods import get_user_by_email, create_user
@@ -8,67 +16,44 @@ from auth_service.models.user import UserRegister, UserLogin
 
 router = APIRouter()
 
-
 @router.post("/register")
-def register(user: UserRegister, db: Session = Depends(get_db)):
-    """
-    Registers a new user in the authentication system.
-
-    Takes a user registration model and a database session by FastAPI's dependency injection.
-    First, it checks if a user with the provided email already exists in the 'auth_users' table.
-    If a match is found, it responds with a HTTP 400 error, 'bad request'.
-    If no user with that email is found, a sub is created with an uuid and the password is hashed.
-    When the user is created, a JWT is created using the user's sub and email.
-    The token and its type are then returned in the json.
+def register(user: UserRegister, db: Session = Depends(get_db)) -> Dict[str, str]:
+    """Registers a new user in the authentication system.
 
     Args:
-        user (UserRegister): The user registration data, email and password.
-        db (Session): The database session provided by the dependency injection.
+        user (UserRegister): The user registration data, containing email and password.
+        db (Session): The database session provided by dependency injection.
 
     Returns:
-        dict: A dictionary containing the jwt as 'access_token' and the token type as 'bearer'.
+        Dict[str, str]: A dictionary containing the JWT as 'access_token' and the token type as 'bearer'.
 
     Raises:
-        HTTPException 400 (bad request): Gets raised if a user with the provided email already exists.
+        HTTPException: If a user with the provided email already exists.
     """
     if get_user_by_email(db, user.email):
         raise HTTPException(status_code=400, detail="That email is already registered")
-    new_sub = str(uuid.uuid4())
-    hashed_pw = hash_password(user.password)
+    new_sub: str = str(uuid.uuid4())
+    hashed_pw: str = hash_password(user.password)
     auth_user = create_user(db, user.email, hashed_pw, new_sub)
-    token = create_access_token({"sub": auth_user.sub, "email": auth_user.email})
+    token: str = create_access_token({"sub": auth_user.sub, "email": auth_user.email})
     return {"access_token": token, "token_type": "bearer"}
 
-
 @router.post("/login")
-def login(user: UserLogin, db: Session = Depends(get_db)):
-    """
-    Logs in an existing user by validating the provided credentials.
-
-    This endpoint receives a user login model and a database session via FastAPI's dependency injection.
-    It queries the 'auth_users' table to find a record that matches the email.
-    If no user is found or if the provided password doesn't match the hashed password from the table,
-    a HTTP 400 error is returned, 'bad request'.
-    If the credentials are valid, a JWT access token is generated using the user's sub and email,
-    and the token along with its type is returned in the JSON response.
+def login(user: UserLogin, db: Session = Depends(get_db)) -> Dict[str, str]:
+    """Logs in an existing user by validating the provided credentials.
 
     Args:
-        user (UserLogin): The login credentials containing the email and password.
+        user (UserLogin): The login credentials containing email and password.
         db (Session): The database session provided via dependency injection.
 
     Returns:
-        dict: A dictionary containing the generated JWT as 'access_token' and the token type as 'Bearer'.
+        Dict[str, str]: A dictionary containing the generated JWT as 'access_token' and the token type as 'bearer'.
 
     Raises:
-        HTTPException 400 (bad request): This gets raised if no user is found or if the password is invalid.
-
-        
+        HTTPException: If the user is not found or the password is invalid.
     """
-
     auth_user = get_user_by_email(db, user.email)
-    print("🔍 Retrieved user:", vars(auth_user) if auth_user else "No user found")
     if not auth_user or not verify_password(user.password, auth_user.hashed_password):
-        print("❌ Login failed due to invalid credentials") 
         raise HTTPException(status_code=400, detail="Invalid username or password")
-    token = create_access_token({"sub": auth_user.sub, "email": auth_user.email})
+    token: str = create_access_token({"sub": auth_user.sub, "email": auth_user.email})
     return {"access_token": token, "token_type": "bearer"}
