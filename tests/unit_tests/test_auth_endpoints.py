@@ -12,7 +12,6 @@ from unittest.mock import MagicMock, patch
 from fastapi.testclient import TestClient
 from auth_service.main import app
 
-
 client = TestClient(app)
 
 class TestAuthEndpoints(unittest.TestCase):
@@ -50,13 +49,8 @@ class TestAuthEndpoints(unittest.TestCase):
         This test confirms that registering a new user (when the email is not already used)
         returns a successful HTTP response (status code 200) along with a valid JWT in the
         response payload.
-
-        Args:
-            mock_create_user (MagicMock): Mocked create_user function to simulate user creation.
-            mock_get_user_by_email (MagicMock): Mocked get_user_by_email function to simulate
-                checking for existing users.
         """
-        mock_get_user_by_email.return_value = None  
+        mock_get_user_by_email.return_value = None
         fake_sub = str(uuid.uuid4())
         class FakeUser:
             def __init__(self):
@@ -64,7 +58,7 @@ class TestAuthEndpoints(unittest.TestCase):
                 self.email = "synx@ttesting.com"
 
         fake_user = FakeUser()
-        mock_create_user.return_value = fake_user  
+        mock_create_user.return_value = fake_user
         response = client.post("/register", json={"email": "synx@ttesting.com", "password": "testpass"})
         self.assertEqual(response.status_code, 200, "Registration should succeed for a new user.")
         data = response.json()
@@ -79,10 +73,6 @@ class TestAuthEndpoints(unittest.TestCase):
         This test confirms that attempting to register with an email that is already registered
         fails with a 400 error, and the response includes an error message indicating that the
         email is already registered.
-
-        Args:
-            mock_get_user_by_email (MagicMock): Mocked get_user_by_email function to simulate
-                an existing user.
         """
         fake_user = object()
         mock_get_user_by_email.return_value = fake_user
@@ -102,10 +92,6 @@ class TestAuthEndpoints(unittest.TestCase):
 
         This test verifies that providing valid credentials returns a 200 status code and a
         JSON payload containing a valid access token and a token type of 'bearer'.
-
-        Args:
-            mock_get_user_by_email (MagicMock): Mocked get_user_by_email function to simulate
-                retrieving a user with matching credentials.
         """
         plain_password = "testpass"
         from auth_service.utils.security import hash_password
@@ -118,7 +104,7 @@ class TestAuthEndpoints(unittest.TestCase):
                 self.hashed_password = hashed
 
         fake_user = FakeUser()
-        mock_get_user_by_email.return_value = fake_user  
+        mock_get_user_by_email.return_value = fake_user
         response = client.post("/login", json={"email": "synx@ttesting.com", "password": plain_password})
         self.assertEqual(response.status_code, 200, "Login should succeed for valid credentials.")
         data = response.json()
@@ -132,13 +118,9 @@ class TestAuthEndpoints(unittest.TestCase):
 
         This test confirms that if a user provides an incorrect password, the login attempt
         fails with a 400 error and an appropriate error message is returned.
-
-        Args:
-            mock_get_user_by_email (MagicMock): Mocked get_user_by_email function to simulate
-                retrieving a user with a known password.
         """
         correct_password = "correctpass"
-        from auth_service.utils.security import hash_password  
+        from auth_service.utils.security import hash_password
         hashed = hash_password(correct_password)
 
         class FakeUser:
@@ -154,8 +136,8 @@ class TestAuthEndpoints(unittest.TestCase):
         data = response.json()
         self.assertEqual(
             data.get("detail"),
-            "Invalid username or password",
-            "Error message should indicate invalid credentials."
+            "Invalid password",
+            "Error message should indicate invalid password."
         )
 
     @patch("auth_service.routes.auth.get_user_by_email")
@@ -165,10 +147,6 @@ class TestAuthEndpoints(unittest.TestCase):
 
         This test confirms that if the email provided is not registered, the login attempt
         fails with a 400 error and returns an appropriate error message indicating invalid credentials.
-
-        Args:
-            mock_get_user_by_email (MagicMock): Mocked get_user_by_email function to simulate
-                a non-existent user.
         """
         mock_get_user_by_email.return_value = None
         response = client.post("/login", json={"email": "notarealthing@unreal.com", "password": "any"})
@@ -176,8 +154,8 @@ class TestAuthEndpoints(unittest.TestCase):
         data = response.json()
         self.assertEqual(
             data.get("detail"),
-            "Invalid username or password",
-            "Error message should indicate invalid credentials."
+            "User not found",
+            "Error message should indicate the user is not found."
         )
 
 
