@@ -12,7 +12,7 @@ It leverages SQLAlchemy for database interactions, bcrypt for secure password ha
 - **CORS Support:** Configured middleware to support cross-origin requests.
 
 ## Directory Structure
-
+'''
 auth_service
 ├── config
 │   ├── __init__.py
@@ -33,7 +33,7 @@ auth_service
 └── utils
     ├── __init__.py
     └── security.py
-
+'''
 ## Environment Variables
 
 Before running the service, configure the following environment variables:
@@ -49,18 +49,19 @@ You can set these in your shell or use a `.env` file for local development.
 
 ## Setting the PYTHONPATH
 
-Ensure that the PYTHONPATH is set to include the project root so that the modules can be correctly imported. You can do this manually in your shell:
+Ensure that the PYTHONPATH is set to include the project root so that the modules can be correctly imported. 
+You can do this manually in your shell:
 
 - **On Linux/Mac:**
 
   ```bash
   export PYTHONPATH=$(pwd)
 
-    On Windows (Command Prompt):
+- **On Windows (Command Prompt):**
 
     set PYTHONPATH=%cd%
 
-You can add these commands to your shell profile (e.g., .bashrc or .zshrc) for convenience.
+You can also add these commands to your shell profile, bashrc or .zshrc for convenience.
 
 ## Setup and Installation
 

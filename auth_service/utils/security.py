@@ -1,5 +1,7 @@
+
 """
 Security utilities module.
+
 
 This module provides functions for generating JWT access tokens,
 hashing passwords, and verifying passwords using bcrypt.

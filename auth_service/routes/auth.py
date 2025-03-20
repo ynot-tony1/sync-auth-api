@@ -53,7 +53,11 @@ def login(user: UserLogin, db: Session = Depends(get_db)) -> Dict[str, str]:
         HTTPException: If the user is not found or the password is invalid.
     """
     auth_user = get_user_by_email(db, user.email)
-    if not auth_user or not verify_password(user.password, auth_user.hashed_password):
-        raise HTTPException(status_code=400, detail="Invalid username or password")
+    if not auth_user:
+        # Return a specific error if no user exists with that email.
+        raise HTTPException(status_code=400, detail="User not found")
+    if not verify_password(user.password, auth_user.hashed_password):
+        # Return a specific error if the password does not match.
+        raise HTTPException(status_code=400, detail="Invalid password")
     token: str = create_access_token({"sub": auth_user.sub, "email": auth_user.email})
     return {"access_token": token, "token_type": "bearer"}
