@@ -89,9 +89,9 @@ On Windows: venv\Scripts\activate
 
 Start the FastAPI server using Uvicorn:
 
-uvicorn main:app --reload --port 8000
+uvicorn main:app --reload --port 8001
 
-Access the API at http://localhost:8000.
+Access the API at http://localhost:8001.
 
 ## Running Tests
 
