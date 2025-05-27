@@ -27,4 +27,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(auth.router)
-Base.metadata.create_all(bind=engine)
+
+@app.on_event("startup")
+def create_tables():
+    Base.metadata.create_all(bind=engine)

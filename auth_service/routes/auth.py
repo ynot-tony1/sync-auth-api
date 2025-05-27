@@ -30,13 +30,21 @@ def register(user: UserRegister, db: Session = Depends(get_db)) -> Dict[str, str
     Raises:
         HTTPException: If a user with the provided email already exists.
     """
+
     if get_user_by_email(db, user.email):
+        print(f"Email already registered: {user.email}")
         raise HTTPException(status_code=400, detail="That email is already registered")
-    new_sub: str = str(uuid.uuid4())
-    hashed_pw: str = hash_password(user.password)
-    auth_user = create_user(db, user.email, hashed_pw, new_sub)
-    token: str = create_access_token({"sub": auth_user.sub, "email": auth_user.email})
-    return {"access_token": token, "token_type": "bearer"}
+    try:
+        new_sub = str(uuid.uuid4())
+        hashed_pw = hash_password(user.password)
+        print("Inserting user into the database...")
+        auth_user = create_user(db, user.email, hashed_pw, new_sub)
+        token = create_access_token({"sub": auth_user.sub, "email": auth_user.email})
+        print(f"Registration successful for {user.email}")
+        return {"access_token": token, "token_type": "bearer"}
+    except Exception as e:
+        print(f"Error during registration: {e}")
+        raise HTTPException(status_code=500, detail="Registration failed")
 
 @router.post("/login")
 def login(user: UserLogin, db: Session = Depends(get_db)) -> Dict[str, str]:
@@ -54,10 +62,8 @@ def login(user: UserLogin, db: Session = Depends(get_db)) -> Dict[str, str]:
     """
     auth_user = get_user_by_email(db, user.email)
     if not auth_user:
-        # Return a specific error if no user exists with that email.
         raise HTTPException(status_code=400, detail="User not found")
     if not verify_password(user.password, auth_user.hashed_password):
-        # Return a specific error if the password does not match.
         raise HTTPException(status_code=400, detail="Invalid password")
     token: str = create_access_token({"sub": auth_user.sub, "email": auth_user.email})
     return {"access_token": token, "token_type": "bearer"}
